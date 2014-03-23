@@ -1,0 +1,3 @@
+[submodule "app/Plugin/Cherry"]
+	path = app/Plugin/Cherry
+	url = https://github.com/thisishuey/Cherry.git
