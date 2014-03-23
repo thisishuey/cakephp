@@ -3,7 +3,7 @@
 	<head>
 		<?php echo $this->Html->charset(); ?>
 		<title>
-			<?php echo __d('cherry', 'Cherry'); ?>:
+			<?php echo __d('fogbugz', 'FogBugz'); ?>:
 			<?php echo $title_for_layout; ?>
 		</title>
 		<?php
@@ -36,26 +36,28 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<?php echo $this->Html->link('Cherry', '/', array('class' => 'navbar-brand')); ?>
+					<?php echo $this->Html->link('FogBugz', '/', array('class' => 'navbar-brand')); ?>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><?php echo $this->Html->link('Home', '/'); ?></li>
-						<li><?php echo $this->Html->link('Link', '#'); ?></li>
-						<li><?php echo $this->Html->link('Link', '#'); ?></li>
 						<li class="dropdown">
-							<?php echo $this->Html->link('Dropdown <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
+							<?php echo $this->Html->link('API <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
 							<ul class="dropdown-menu">
-								<li><?php echo $this->Html->link('Action', '#'); ?></li>
-								<li><?php echo $this->Html->link('Another action', '#'); ?></li>
-								<li><?php echo $this->Html->link('Something else here', '#'); ?></li>
-								<li class="divider"></li>
-								<li class="dropdown-header">Nav header</li>
-								<li><?php echo $this->Html->link('Separated link', '#'); ?></li>
-								<li><?php echo $this->Html->link('One more separated link', '#'); ?></li>
+								<li><?php echo $this->Html->link('Home', array('controller' => 'apis', 'action' => 'index')); ?></li>
+								<li><?php echo $this->Html->link('Command', array('controller' => 'apis', 'action' => 'cmd')); ?></li>
 							</ul>
 						</li>
 					</ul>
+					<?php if ($this->Session->check('Auth.email')): ?>
+						<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+								<?php echo $this->Html->link($this->Session->read('Auth.name') . ' <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
+								<ul class="dropdown-menu">
+									<li><?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?></li>
+								</ul>
+							</li>
+						</ul>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>
