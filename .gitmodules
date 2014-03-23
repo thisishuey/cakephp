@@ -1,3 +1,6 @@
 [submodule "app/Plugin/Cherry"]
 	path = app/Plugin/Cherry
 	url = https://github.com/thisishuey/Cherry.git
+[submodule "app/Plugin/DebugKit"]
+	path = app/Plugin/DebugKit
+	url = https://github.com/cakephp/debug_kit.git
