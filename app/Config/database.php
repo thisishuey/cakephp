@@ -65,9 +65,9 @@ class DATABASE_CONFIG {
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'database_name',
+		'login' => 'root',
+		'password' => 'N3qad1Em',
+		'database' => 'fogbugz',
 		'prefix' => '',
 		//'encoding' => 'utf8',
 	);
