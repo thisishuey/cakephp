@@ -30,12 +30,13 @@
 				foreach ($this->request->named as $key => $value) {
 					$cmdRequestUrl .= '&' . $key . '=' . $value;
 				}
+				$this->Session->setFlash($cmdRequestUrl, 'Cherry.flash/info');
 				$cmdResponseXml = Xml::build($cmdRequestUrl);
 				$cmdResponse = Xml::toArray($cmdResponseXml);
 			} else {
 				$flash = __('<p><strong>You must enter a command in the url, e.g.</strong></p>');
 				$flash .= '<ol>';
-				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . '&lt;command&gt;/&lt;parameter_1&gt;:&lt;value_1&gt;/&lt;parameter_2&gt;:&lt;value_2&gt;/.../&lt;parameter_n&gt;:&lt;value_n&gt;</em></li>';
+				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . '&lt;command&gt;/&lt;argument_1&gt;:&lt;value_1&gt;/&lt;argument_2&gt;:&lt;value_2&gt;/.../&lt;argument_n&gt;:&lt;value_n&gt;</em></li>';
 				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'search/q:&lt;case_id&gt;/cols:sTitle,sStatus,events</em></li>';
 				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'viewPerson/ixPerson:&lt;person_id&gt;</em></li>';
 				$flash .= '</ol>';
