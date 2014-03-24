@@ -36,9 +36,9 @@
 			} else {
 				$flash = __('<p><strong>You must enter a command in the url, e.g.</strong></p>');
 				$flash .= '<ol>';
-				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . '&lt;command&gt;/&lt;argument_1&gt;:&lt;value_1&gt;/&lt;argument_2&gt;:&lt;value_2&gt;/.../&lt;argument_n&gt;:&lt;value_n&gt;</em></li>';
-				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'search/q:&lt;case_id&gt;/cols:sTitle,sStatus,events</em></li>';
-				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'viewPerson/ixPerson:&lt;person_id&gt;</em></li>';
+				$flash .= '<li><em>' . FULL_BASE_URL . str_replace('//', '/', $this->request->here . '/&lt;command&gt;/&lt;argument_1&gt;:&lt;value_1&gt;/&lt;argument_2&gt;:&lt;value_2&gt;/.../&lt;argument_n&gt;:&lt;value_n&gt;</em></li>');
+				$flash .= '<li><em>' . FULL_BASE_URL . str_replace('//', '/', $this->request->here . '/search/q:&lt;case_id&gt;/cols:sTitle,sStatus,events</em></li>');
+				$flash .= '<li><em>' . FULL_BASE_URL . str_replace('//', '/', $this->request->here . '/viewPerson/ixPerson:&lt;person_id&gt;</em></li>');
 				$flash .= '</ol>';
 				$flash .= '<p><a href="https://help.fogcreek.com/8202/xml-api" target="_blank" class="alert-link">View FogBugz XML API Documentation</a></p>';
 				$this->Session->setFlash($flash, 'Cherry.flash/info');

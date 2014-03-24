@@ -12,7 +12,7 @@
 		public function login() {
 			if($this->Session->read('Auth')) {
 				$this->Session->setFlash(__('You are already logged in.'), 'Cherry.flash/info');
-				return $this->redirect('/');
+				return $this->redirect(array('controller' => 'apis', 'action' => 'cmd'));
 			}
 			if(!empty($this->request->data)) {
 				$user = $this->request->data['User'];
