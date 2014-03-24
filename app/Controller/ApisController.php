@@ -33,7 +33,12 @@
 				$cmdResponseXml = Xml::build($cmdRequestUrl);
 				$cmdResponse = Xml::toArray($cmdResponseXml);
 			} else {
-				$this->Session->setFlash(__('You must enter a command'), 'Cherry.flash/danger');
+				$flash = __('<p>You must enter a command in the url, e.g.</p>');
+				$flash .= '<ol>';
+				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'search/q:&lt;case_id&gt;/cols:sTitle,sStatus,events</em></li>';
+				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'viewPerson/ixPerson:&lt;person_id&gt;</em></li>';
+				$flash .= '</ol>';
+				$this->Session->setFlash($flash, 'Cherry.flash/danger');
 			}
 			$this->set(compact('cmdResponse'));
 			$this->set('_serialize', 'cmdResponse');
