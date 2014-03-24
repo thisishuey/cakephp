@@ -33,11 +33,12 @@
 				$cmdResponseXml = Xml::build($cmdRequestUrl);
 				$cmdResponse = Xml::toArray($cmdResponseXml);
 			} else {
-				$flash = __('<p>You must enter a command in the url, e.g.</p>');
+				$flash = __('<p><strong>You must enter a command in the url, e.g.</strong></p>');
 				$flash .= '<ol>';
 				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'search/q:&lt;case_id&gt;/cols:sTitle,sStatus,events</em></li>';
 				$flash .= '<li><em>' . FULL_BASE_URL . $this->request->here . 'viewPerson/ixPerson:&lt;person_id&gt;</em></li>';
 				$flash .= '</ol>';
+				$flash .= '<p><a href="https://help.fogcreek.com/8202/xml-api" target="_blank" class="alert-link">View FogBugz XML Documentation</a></p>';
 				$this->Session->setFlash($flash, 'Cherry.flash/danger');
 			}
 			$this->set(compact('cmdResponse'));
