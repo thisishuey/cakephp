@@ -39,7 +39,7 @@
 						$redirectUrl = $this->Session->read('LoginRedirect');
 						$this->Session->delete('LoginRedirect');
 					} else {
-						$redirectUrl = array('controller' => 'apis', 'action' => 'index');
+						$redirectUrl = array('controller' => 'apis', 'action' => 'cmd');
 					}
 					return $this->redirect($redirectUrl);
 				} else {
