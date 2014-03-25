@@ -12,7 +12,8 @@
 			echo $this->Html->css(array(
 				'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css',
 				'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css',
-				'/cherry/css/core'
+				'/cherry/css/core',
+				'default'
 			));
 			echo $this->fetch('meta');
 			echo $this->fetch('css');
@@ -27,7 +28,7 @@
 		<![endif]-->
 	</head>
 	<body id="top" class="controller-<?php echo $this->request->params['controller']; ?> action-<?php echo $this->request->params['action']; ?>">
-		<div class="navbar navbar-default" role="navigation">
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="container">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -41,9 +42,15 @@
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li class="dropdown">
+							<?php echo $this->Html->link('Cases <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
+							<ul class="dropdown-menu">
+								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'cases', 'action' => 'index')); ?></li>
+							</ul>
+						</li>
+						<li class="dropdown">
 							<?php echo $this->Html->link('API <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
 							<ul class="dropdown-menu">
-								<li><?php echo $this->Html->link('Home', array('controller' => 'apis', 'action' => 'index')); ?></li>
+								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'apis', 'action' => 'index')); ?></li>
 								<li><?php echo $this->Html->link('Command', array('controller' => 'apis', 'action' => 'cmd')); ?></li>
 							</ul>
 						</li>
