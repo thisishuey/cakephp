@@ -20,12 +20,12 @@
 			$completed = array();
 			for ($i = 7; $i > 0; $i--) {
 				$date = CakeTime::format('-' . $i . ' days');
-				$completedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"me" resolved:"' . $date . '"&cols=sTitle';
+				$completedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"me" resolved:"' . $date . '" orderBy:"ixBug"&cols=sTitle';
 				$completedResponseXml = Xml::build($completedRequestUrl);
 				$completedResponse = Xml::toArray($completedResponseXml);
 				$completed[$date] = $completedResponse['response'];
 			}
-			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"me" status:"active (dev)"&cols=sTitle';
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"me" status:"active (dev)" orderBy:"ixBug"&cols=sTitle';
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
 			$workingOn = $activeDevResponse['response'];
