@@ -3,7 +3,7 @@
 	<head>
 		<?php echo $this->Html->charset(); ?>
 		<title>
-			<?php echo __d('fogbugz', 'FogBugz'); ?>:
+			<?php echo __d('fogban', 'FogBan'); ?>:
 			<?php echo $title_for_layout; ?>
 		</title>
 		<?php
@@ -37,7 +37,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<?php echo $this->Html->link('FogBugz', '/', array('class' => 'navbar-brand')); ?>
+					<?php echo $this->Html->link('FogBan', '/', array('class' => 'navbar-brand')); ?>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
