@@ -1,11 +1,11 @@
 <div class="page-header">
 	<h4>Completed</h4>
 </div>
-<?php foreach ($resolvedDates as $date => $resolvedDate): ?>
+<?php foreach ($completed as $date => $completedDate): ?>
 	<h5><?php echo $date; ?></h5>
 	<ul>
-		<?php if ($resolvedDate['cases']['@count'] > 0): ?>
-			<?php foreach ($resolvedDate['cases']['case'] as $case): ?>
+		<?php if ($completedDate['cases']['@count'] > 0): ?>
+			<?php foreach ($completedDate['cases']['case'] as $case): ?>
 				<li><strong class="text-success"><?php echo $case['@ixBug']; ?>:</strong> <?php echo $case['sTitle']; ?></li>
 			<?php endforeach; ?>
 		<?php else: ?>
