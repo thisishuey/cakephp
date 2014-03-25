@@ -2,7 +2,7 @@
 	<h4>Completed</h4>
 </div>
 <?php foreach ($completed as $date => $completedDate): ?>
-	<h5><?php echo $date; ?></h5>
+	<h5><?php echo $this->Time->format($date, '%A <small>%B %e, %Y</small>'); ?></h5>
 	<ul>
 		<?php if ($completedDate['cases']['@count'] === '0'): ?>
 			<li><strong class="text-warning">No cases resolved</strong></li>
