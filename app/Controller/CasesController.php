@@ -18,7 +18,7 @@
 			}
 			$auth = $this->Session->read('Auth');
 			$completed = array();
-			for ($i = 7; $i > 0; $i--) {
+			for ($i = 6; $i >= 0; $i--) {
 				$date = CakeTime::format('-' . $i . ' days');
 				$completedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"me" resolved:"' . $date . '" orderBy:"ixBug"&cols=sTitle';
 				$completedResponseXml = Xml::build($completedRequestUrl);
