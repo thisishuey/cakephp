@@ -44,7 +44,7 @@
 						<li class="dropdown">
 							<?php echo $this->Html->link('Cases <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
 							<ul class="dropdown-menu">
-								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'cases', 'action' => 'index', 'name' => $this->Session->read('Auth.name'))); ?></li>
+								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'cases', 'action' => 'index')); ?></li>
 							</ul>
 						</li>
 						<li class="dropdown">

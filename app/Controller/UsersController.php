@@ -13,7 +13,7 @@
 			if ($this->Session->check('Auth')) {
 				$auth = $this->Session->read('Auth');
 				$this->Session->setFlash(__('You are already logged in.'), 'Cherry.flash/info');
-				return $this->redirect(array('controller' => 'cases', 'action' => 'index', 'name' => $auth['name']));
+				return $this->redirect(array('controller' => 'cases', 'action' => 'index'));
 			}
 			if (!empty($this->request->data)) {
 				$user = $this->request->data['User'];
@@ -40,7 +40,7 @@
 						$redirectUrl = $this->Session->read('LoginRedirect');
 						$this->Session->delete('LoginRedirect');
 					} else {
-						$redirectUrl = array('controller' => 'cases', 'action' => 'index', 'name' => $auth['name']);
+						$redirectUrl = array('controller' => 'cases', 'action' => 'index');
 					}
 					return $this->redirect($redirectUrl);
 				} else {
