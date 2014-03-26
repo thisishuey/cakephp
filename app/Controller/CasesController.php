@@ -17,18 +17,44 @@
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
 			}
 			$auth = $this->Session->read('Auth');
-			$completed = array();
-			for ($i = 6; $i >= 0; $i--) {
-				$date = CakeTime::format('-' . $i . ' days');
-				$completedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"me" resolved:"' . $date . '" orderBy:"ixBug"&cols=sTitle';
-				$completedResponseXml = Xml::build($completedRequestUrl);
-				$completedResponse = Xml::toArray($completedResponseXml);
-				$completed[$date] = $completedResponse['response'];
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"me" resolved:"-7d.." orderBy:"resolved"&cols=sTitle,dtResolved';
+			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
+			$resolvedResponse = Xml::toArray($resolvedResponseXml);
+			$resolvedCount = $resolvedResponse['response']['cases']['@count'];
+			if ((int) $resolvedCount === 0) {
+				$resolvedCases = array();
+			} else if ((int) $resolvedCount === 1) {
+				$resolvedCases = array($resolvedResponse['response']['cases']['case']);
+			} else {
+				$resolvedCases = $resolvedResponse['response']['cases']['case'];
 			}
+
+			$completed = array();
+			if (!empty($resolvedCases)) {
+				foreach ($resolvedCases as $resolvedCase) {
+					$completed[CakeTime::format($resolvedCase['dtResolved'])][$resolvedCase['@ixBug']] = $resolvedCase['sTitle'];
+				}
+			}
+
 			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"me" status:"active (dev)" orderBy:"ixBug"&cols=sTitle';
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
-			$workingOn = $activeDevResponse['response'];
+			$activeDevCount = $activeDevResponse['response']['cases']['@count'];
+			if ((int) $activeDevCount === 0) {
+				$activeDevCases = array();
+			} else if ((int) $activeDevCount === 1) {
+				$activeDevCases = array($activeDevResponse['response']['cases']['case']);
+			} else {
+				$activeDevCases = $activeDevResponse['response']['cases']['case'];
+			}
+
+			$workingOn = array();
+			if (!empty($activeDevCases)) {
+				foreach ($activeDevCases as $activeDevCase) {
+					$workingOn[$activeDevCase['@ixBug']] = $activeDevCase['sTitle'];
+				}
+			}
+
 			$this->set(compact('completed', 'workingOn'));
 			$this->set('_serialize', array('completed', 'workingOn'));
 		}
