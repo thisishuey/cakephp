@@ -1,3 +1,6 @@
+<?php echo $this->Form->create('filter', array('cherry' => 'form-inline', 'class' => 'form-inline text-right')); ?>
+	<?php echo $this->Form->input('name', array('options' => $people, 'label' => false, 'class' => 'input-sm')); ?>
+<?php echo $this->Form->end(); ?>
 <div class="page-header">
 	<h4>Completed</h4>
 </div>

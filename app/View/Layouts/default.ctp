@@ -44,7 +44,7 @@
 						<li class="dropdown">
 							<?php echo $this->Html->link('Cases <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
 							<ul class="dropdown-menu">
-								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'cases', 'action' => 'index')); ?></li>
+								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'cases', 'action' => 'index', 'name' => $this->Session->read('Auth.name'))); ?></li>
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -73,10 +73,12 @@
 			<?php echo $this->fetch('content'); ?>
 		</div>
 		<?php
+			echo $this->Html->scriptBlock('var baseUrl = \'' . $this->Html->url('/') . '\';');
 			echo $this->Html->script(array(
 				'//code.jquery.com/jquery-1.11.0.min.js',
 				'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js',
-				'/cherry/js/core'
+				'/cherry/js/core',
+				'default'
 			));
 			echo $this->fetch('script');
 		?>
