@@ -10,7 +10,7 @@
 		}
 
 		public function index() {
-			if(!$this->Session->read('Auth')) {
+			if (!$this->Session->read('Auth')) {
 				$this->Session->write('LoginRedirect', '/' . $this->request->url);
 				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
@@ -18,7 +18,7 @@
 		}
 
 		public function cmd($cmd = null) {
-			if(!$this->Session->read('Auth')) {
+			if (!$this->Session->read('Auth')) {
 				$this->Session->write('LoginRedirect', '/' . $this->request->url);
 				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
