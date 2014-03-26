@@ -7,7 +7,7 @@
 			<?php echo $title_for_layout; ?>
 		</title>
 		<?php
-			echo $this->Html->meta('icon');
+			echo $this->Html->meta('icon', '/img/frogban.png');
 			echo $this->Html->meta(array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0, user-scalable=no'));
 			echo $this->Html->css(array(
 				'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css',
@@ -37,7 +37,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<?php echo $this->Html->link('FogBan', '/', array('class' => 'navbar-brand')); ?>
+					<?php echo $this->Html->link($this->Html->image('frogban', array('width' => 20, 'height' => 20)) . ' FrogBan', '/', array('class' => 'navbar-brand', 'escape' => false)); ?>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
@@ -45,6 +45,7 @@
 							<?php echo $this->Html->link('Cases <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
 							<ul class="dropdown-menu">
 								<li><?php echo $this->Html->link('Dashboard', array('controller' => 'cases', 'action' => 'index')); ?></li>
+								<li><?php echo $this->Html->link('Open FogBugz', $this->Session->read('Auth.fogbugz_url'), array('target' => '_blank')); ?></li>
 							</ul>
 						</li>
 						<li class="dropdown">
