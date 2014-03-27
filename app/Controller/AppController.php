@@ -33,6 +33,6 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
 	public $helpers = array('Form' => array('className' => 'Cherry.CherryForm'));
-	public $components = array('RequestHandler', 'Session', 'DebugKit.Toolbar');
+	public $components = array('RequestHandler', 'Session', 'Paginator', 'DebugKit.Toolbar');
 
 }

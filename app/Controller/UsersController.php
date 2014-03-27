@@ -59,4 +59,100 @@
 			return $this->redirect(array('action' => 'login'));
 		}
 
+		public function index() {
+			if (!$this->Session->read('Auth')) {
+				$this->Session->write('LoginRedirect', '/' . $this->request->url);
+				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
+				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
+			}
+			$users = $this->paginate();
+			$this->set(compact('users'));
+		}
+
+		public function view($id = null) {
+			if (!$this->Session->read('Auth')) {
+				$this->Session->write('LoginRedirect', '/' . $this->request->url);
+				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
+				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
+			}
+			if (!$this->User->exists($id)) {
+				throw new NotFoundException(__('Invalid user'));
+			}
+			$user = $this->User->find('first', array('conditions' => array('User.' . $this->User->primaryKey => $id)));
+			$this->set(compact('user'));
+		}
+
+		public function add() {
+			if (!$this->Session->read('Auth')) {
+				$this->Session->write('LoginRedirect', '/' . $this->request->url);
+				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
+				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
+			}
+			$auth = $this->Session->read('Auth');
+			if ($this->request->is('post')) {
+				$userRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=viewPerson&ixPerson=' . $this->request->data['User']['user_id'];
+				$userResponseXml = Xml::build($userRequestUrl);
+				$userResponse = Xml::toArray($userResponseXml);
+				$user = $userResponse['response']['person'];
+				$this->request->data['User']['fogbugz_id'] = $user['ixPerson'];
+				$this->request->data['User']['name'] = $user['sFullName'];
+				$this->request->data['User']['email'] = $user['sEmail'];
+				$this->User->create();
+				if ($this->User->save($this->request->data)) {
+					$this->Session->setFlash(__('The user has been saved'), 'Cherry.flash/success');
+					$this->redirect(array('action' => 'view', $this->User->id));
+				} else {
+					$this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'Cherry.flash/danger');
+				}
+			}
+			$usersRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=listPeople';
+			$usersResponseXml = Xml::build($usersRequestUrl);
+			$usersResponse = Xml::toArray($usersResponseXml);
+			$users = array();
+			foreach ($usersResponse['response']['people']['person'] as $person) {
+				$users[$person['ixPerson']] = $person['sFullName'];
+			}
+			$this->set(compact('users'));
+		}
+
+		public function edit($id = null) {
+			if (!$this->Session->read('Auth')) {
+				$this->Session->write('LoginRedirect', '/' . $this->request->url);
+				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
+				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
+			}
+			if (!$this->User->exists($id)) {
+				throw new NotFoundException(__('Invalid user'));
+			}
+			if ($this->request->is('post') || $this->request->is('put')) {
+				if ($this->User->save($this->request->data)) {
+					$this->Session->setFlash(__('The user has been saved'), 'Cherry.flash/success');
+					$this->redirect(array('action' => 'view', $this->User->id));
+				} else {
+					$this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'Cherry.flash/danger');
+				}
+			} else {
+				$this->request->data = $this->User->find('first', array('conditions' => array('User.' . $this->User->primaryKey => $id), 'contain' => false));
+			}
+		}
+
+		public function delete($id = null) {
+			if (!$this->Session->read('Auth')) {
+				$this->Session->write('LoginRedirect', '/' . $this->request->url);
+				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
+				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
+			}
+			$this->User->id = $id;
+			if (!$this->User->exists()) {
+				throw new NotFoundException(__('Invalid user'));
+			}
+			$this->request->onlyAllow('post', 'delete');
+			if ($this->User->delete()) {
+				$this->Session->setFlash(__('User deleted'), 'Cherry.flash/success');
+				$this->redirect(array('action' => 'index'));
+			}
+			$this->Session->setFlash(__('User was not deleted'), 'Cherry.flash/danger');
+			$this->redirect(array('action' => 'index'));
+		}
+
 	}

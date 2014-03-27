@@ -6,6 +6,8 @@
 
 	class CasesController extends AppController {
 
+		var $uses = array('User');
+
 		public function beforeFilter() {
 			parent::beforeFilter();
 		}
@@ -16,21 +18,11 @@
 				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
 			}
-
 			$auth = $this->Session->read('Auth');
-
 			if (!$userId) {
 				return $this->redirect(array('controller' => 'cases', 'action' => 'index', $auth['id']));
 			}
-
-			$usersRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=listPeople';
-			$usersResponseXml = Xml::build($usersRequestUrl);
-			$usersResponse = Xml::toArray($usersResponseXml);
-			$users = array();
-			foreach ($usersResponse['response']['people']['person'] as $user) {
-				$users[$user['ixPerson']] = $user['sFullName'];
-			}
-
+			$users = $this->User->find('list', array('fields' => array('fogbugz_id', 'name')));
 			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=ixBug,sTitle,dtResolved,sProject';
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
@@ -39,7 +31,6 @@
 			} else {
 				$resolvedCount = 0;
 			}
-
 			if ((int) $resolvedCount === 0) {
 				$resolvedCases = array();
 			} else if ((int) $resolvedCount === 1) {
@@ -47,7 +38,6 @@
 			} else {
 				$resolvedCases = $resolvedResponse['response']['cases']['case'];
 			}
-
 			$completed = array();
 			if (!empty($resolvedCases)) {
 				foreach ($resolvedCases as $resolvedCase) {
@@ -58,7 +48,6 @@
 					);
 				}
 			}
-
 			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=ixBug,sTitle,sProject';
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
@@ -67,7 +56,6 @@
 			} else {
 				$activeDevCount = 0;
 			}
-
 			if ((int) $activeDevCount === 0) {
 				$activeDevCases = array();
 			} else if ((int) $activeDevCount === 1) {
@@ -75,7 +63,6 @@
 			} else {
 				$activeDevCases = $activeDevResponse['response']['cases']['case'];
 			}
-
 			$workingOn = array();
 			if (!empty($activeDevCases)) {
 				foreach ($activeDevCases as $activeDevCase) {
@@ -86,9 +73,7 @@
 					);
 				}
 			}
-
 			$this->request->data['filter']['user_id'] = $userId;
-
 			$this->set(compact('users', 'completed', 'workingOn'));
 			$this->set('_serialize', array('completed', 'workingOn'));
 		}
