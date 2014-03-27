@@ -5,7 +5,8 @@
 			<?php echo $this->Html->link('XML', '/' . $this->request->url . '.xml', array('target' => '_blank', 'class' => 'btn btn-success btn-xs')); ?>
 		</div>
 	</p>
+	<?php $configureDebug = Configure::read('debug'); ?>
 	<?php Configure::write('debug', 2); ?>
 	<?php debug($cmdResponse, null, false); ?>
-	<?php Configure::write('debug', 0); ?>
+	<?php Configure::write('debug', $configureDebug); ?>
 <?php endif; ?>
