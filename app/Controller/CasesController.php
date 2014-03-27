@@ -31,7 +31,7 @@
 				$users[$user['ixPerson']] = $user['sFullName'];
 			}
 
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=sTitle,dtResolved';
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=ixBug,sTitle,dtResolved,sProject';
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -51,11 +51,15 @@
 			$completed = array();
 			if (!empty($resolvedCases)) {
 				foreach ($resolvedCases as $resolvedCase) {
-					$completed[CakeTime::format($resolvedCase['dtResolved'])][$resolvedCase['@ixBug']] = $resolvedCase['sTitle'];
+					$completed[CakeTime::format($resolvedCase['dtResolved'])][$resolvedCase['sProject']][] = array(
+						'id' => $resolvedCase['ixBug'],
+						'title' => $resolvedCase['sTitle'],
+						'project' => $resolvedCase['sProject']
+					);
 				}
 			}
 
-			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=sTitle';
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=ixBug,sTitle,sProject';
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
 			if (isset($activeDevResponse['response']['cases'])) {
@@ -75,7 +79,11 @@
 			$workingOn = array();
 			if (!empty($activeDevCases)) {
 				foreach ($activeDevCases as $activeDevCase) {
-					$workingOn[$activeDevCase['@ixBug']] = $activeDevCase['sTitle'];
+					$workingOn[$activeDevCase['sProject']][] = array(
+						'id' => $activeDevCase['ixBug'],
+						'title' => $activeDevCase['sTitle'],
+						'project' => $activeDevCase['sProject']
+					);
 				}
 			}
 
