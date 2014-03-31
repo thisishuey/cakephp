@@ -23,7 +23,7 @@
 				return $this->redirect(array('controller' => 'cases', 'action' => 'index', $auth['id']));
 			}
 			$users = $this->User->find('list', array('fields' => array('fogbugz_id', 'name')));
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=ixBug,sTitle,dtResolved,sProject';
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=ixBug,sTitle,dtResolved,sProject,events';
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -44,7 +44,8 @@
 					$completed[CakeTime::format($resolvedCase['dtResolved'])][$resolvedCase['sProject']][] = array(
 						'id' => $resolvedCase['ixBug'],
 						'title' => $resolvedCase['sTitle'],
-						'project' => $resolvedCase['sProject']
+						'project' => $resolvedCase['sProject'],
+						'events' => $resolvedCase['events']['event']
 					);
 				}
 			}
