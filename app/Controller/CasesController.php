@@ -22,8 +22,9 @@
 			if (!$userId) {
 				return $this->redirect(array('controller' => 'cases', 'action' => 'index', $auth['id']));
 			}
+			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
 			$users = $this->User->find('list', array('fields' => array('fogbugz_id', 'name')));
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=ixBug,sTitle,dtResolved,sProject,events';
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -49,7 +50,7 @@
 					);
 				}
 			}
-			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=ixBug,sTitle,sProject';
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
 			if (isset($activeDevResponse['response']['cases'])) {
@@ -70,7 +71,8 @@
 					$workingOn[$activeDevCase['sProject']][] = array(
 						'id' => $activeDevCase['ixBug'],
 						'title' => $activeDevCase['sTitle'],
-						'project' => $activeDevCase['sProject']
+						'project' => $activeDevCase['sProject'],
+						'events' => $activeDevCase['events']['event']
 					);
 				}
 			}
