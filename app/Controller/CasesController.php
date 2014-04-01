@@ -24,7 +24,7 @@
 			}
 			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
 			$users = $this->User->find('list', array('fields' => array('fogbugz_id', 'name')));
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-7d.." orderBy:"resolved"&cols=' . $cols;
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-8d.." orderBy:"resolved"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -40,14 +40,26 @@
 				$resolvedCases = $resolvedResponse['response']['cases']['case'];
 			}
 			$completed = array();
+			for ($i = 7; $i >= 0; $i--) {
+				$date = CakeTime::format('-' . $i . 'days');
+				$completed[$date] = array('projects' => array());
+				if (CakeTime::format($date) !== CakeTime::format('now')) {
+					$completed[$date]['dateFormat'] = '%A <small>%B %e, %Y</small>';
+				} else {
+					$completed[$date]['dateFormat'] = 'Today <small>%B %e, %Y</small>';
+				}
+			}
 			if (!empty($resolvedCases)) {
 				foreach ($resolvedCases as $resolvedCase) {
-					$completed[CakeTime::format($resolvedCase['dtResolved'])][$resolvedCase['sProject']][] = array(
-						'id' => $resolvedCase['ixBug'],
-						'title' => $resolvedCase['sTitle'],
-						'project' => $resolvedCase['sProject'],
-						'events' => $resolvedCase['events']['event']
-					);
+					$date = CakeTime::format($resolvedCase['dtResolved']);
+					if (isset($completed[$date])) {
+						$completed[$date]['projects'][$resolvedCase['sProject']][] = array(
+							'id' => $resolvedCase['ixBug'],
+							'title' => $resolvedCase['sTitle'],
+							'project' => $resolvedCase['sProject'],
+							'events' => $resolvedCase['events']['event']
+						);
+					}
 				}
 			}
 			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
@@ -65,10 +77,10 @@
 			} else {
 				$activeDevCases = $activeDevResponse['response']['cases']['case'];
 			}
-			$workingOn = array();
+			$workingOn = array('projects' => array());
 			if (!empty($activeDevCases)) {
 				foreach ($activeDevCases as $activeDevCase) {
-					$workingOn[$activeDevCase['sProject']][] = array(
+					$workingOn['projects'][$activeDevCase['sProject']][] = array(
 						'id' => $activeDevCase['ixBug'],
 						'title' => $activeDevCase['sTitle'],
 						'project' => $activeDevCase['sProject'],

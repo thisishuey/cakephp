@@ -4,54 +4,11 @@
 <div class="page-header">
 	<h3>Completed</h3>
 </div>
-<?php for ($i = 7; $i >= 0; $i--): ?>
-	<?php $date = $this->Time->format('-' . $i . 'days'); ?>
-	<h4>
-		<?php if ($this->Time->format($date) === $this->Time->Format('now')): ?>
-			Today <?php echo $this->Time->format($date, '<small>%B %e, %Y</small>'); ?>
-		<?php else: ?>
-			<?php echo $this->Time->format($date, '%A <small>%B %e, %Y</small>'); ?>
-		<?php endif; ?>
-	</h4>
-	<ul>
-		<?php if (!empty($completed[$date])): ?>
-			<?php foreach ($completed[$date] as $projectTitle => $cases): ?>
-				<li>
-					<h5><?php echo $projectTitle; ?></h5>
-					<ul>
-						<?php foreach ($cases as $case): ?>
-							<li>
-								<strong><?php echo $this->Html->link($case['id'], '#', array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => '#modal-' . $case['id'])); ?>:</strong> <?php echo $case['title']; ?>
-								<?php echo $this->element('Cases/modal', compact('case')); ?>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				</li>
-			<?php endforeach; ?>
-		<?php else: ?>
-			<li><h5 class="text-warning">No cases resolved</h5></li>
-		<?php endif; ?>
-	</ul>
-<?php endfor; ?>
+<?php foreach ($completed as $date => $completedDate): ?>
+	<h4><?php echo $this->Time->format($date, $completedDate['dateFormat']); ?></h4>
+	<?php echo $this->element('Cases/list', array('projects' => $completedDate['projects'], 'emptyText' => 'No cases resolved')); ?>
+<?php endforeach; ?>
 <div class="page-header">
 	<h3>Working On:</h3>
 </div>
-<ul>
-	<?php if (!empty($workingOn)): ?>
-		<?php foreach ($workingOn as $projectTitle => $cases): ?>
-			<li>
-				<h5><?php echo $projectTitle; ?></h5>
-				<ul>
-					<?php foreach ($cases as $case): ?>
-						<li>
-							<strong class="text-success"><?php echo $this->Html->link($case['id'], '#', array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => '#modal-' . $case['id'])); ?>:</strong> <?php echo $case['title']; ?>
-							<?php echo $this->element('Cases/modal', compact('case')); ?>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			</li>
-		<?php endforeach; ?>
-	<?php else: ?>
-		<li><h5 class="text-warning">No cases set to "Active (Dev)"</h5></li>
-	<?php endif; ?>
-</ul>
+<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'emptyText' => 'No cases set to "Active (Dev)"')); ?>
