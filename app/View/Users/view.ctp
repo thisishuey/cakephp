@@ -4,7 +4,6 @@
 			<div class="panel-heading"><?php echo __('Actions'); ?></div>
 			<div class="list-group">
 				<?php echo $this->Html->link(__('List Users'), array('action' => 'index'), array('class' => 'list-group-item')); ?>
-				<?php echo $this->Html->link(__('View User'), array('action' => 'view', $user['User']['id']), array('class' => 'list-group-item active')); ?>
 				<div class="list-group-item">
 					<?php echo $this->Form->create('filter', array('cherry' => 'form-horizontal', 'data-url' => 'users/view/')); ?>
 						<?php echo $this->Form->input('user_id', array('label' => false, 'before' => '<div class="col-md-12">', 'after' => '</div>')); ?>
