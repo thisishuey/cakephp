@@ -12,19 +12,22 @@
 			parent::beforeFilter();
 		}
 
-		public function index($userId = null) {
+		public function index() {
 			if (!$this->Session->read('Auth')) {
 				$this->Session->write('LoginRedirect', '/' . $this->request->url);
 				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
 			}
 			$auth = $this->Session->read('Auth');
-			if (!$userId) {
-				return $this->redirect(array('controller' => 'cases', 'action' => 'index', $auth['id']));
-			}
 			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
-			$users = $this->User->find('list', array('fields' => array('fogbugz_id', 'name')));
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $users[$userId] . '" resolved:"-8d.." orderBy:"resolved"&cols=' . $cols;
+			$users = $this->User->find('list');
+			$resolvedByQuery = array();
+			$assignedToQuery = array();
+			foreach ($users as $id => $name) {
+				$resolvedByQuery[] = 'resolvedBy:"' . $name . '"';
+				$assignedToQuery[] = 'assignedTo:"' . $name . '"';
+			}
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $resolvedByQuery) . ' resolved:"-8d.." orderBy:"resolved"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -62,7 +65,7 @@
 					}
 				}
 			}
-			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $users[$userId] . '" status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $assignedToQuery) . ' status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
 			if (isset($activeDevResponse['response']['cases'])) {
@@ -88,7 +91,6 @@
 					);
 				}
 			}
-			$this->request->data['filter']['user_id'] = $userId;
 			$this->set(compact('users', 'completed', 'workingOn'));
 			$this->set('_serialize', array('completed', 'workingOn'));
 		}

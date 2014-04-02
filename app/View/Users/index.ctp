@@ -4,7 +4,6 @@
 			<div class="panel-heading"><?php echo __('Actions'); ?></div>
 			<div class="list-group">
 				<?php echo $this->Html->link(__('List Users'), array('action' => 'index'), array('class' => 'list-group-item active')); ?>
-				<?php echo $this->Html->link(__('Add User'), array('action' => 'add'), array('class' => 'list-group-item')); ?>
 			</div>
 		</div>
 	</div>
@@ -13,8 +12,8 @@
 		<div class="table-responsive">
 			<table class="table table-striped table-bordered">
 				<tr>
-					<th><?php echo $this->Paginator->sort('id'); ?></th>
-					<th><?php echo $this->Paginator->sort('fogbugz_id'); ?></th>
+					<th><?php echo $this->Paginator->sort('id', 'ID'); ?></th>
+					<th><?php echo $this->Paginator->sort('fogbugz_id', 'FogBugz ID'); ?></th>
 					<th><?php echo $this->Paginator->sort('name'); ?></th>
 					<th><?php echo $this->Paginator->sort('email'); ?></th>
 					<th><?php echo $this->Paginator->sort('created'); ?></th>
@@ -32,8 +31,6 @@
 						<td class="actions">
 							<div class="btn-group">
 								<?php echo $this->Html->link('<span class="glyphicon glyphicon-list-alt"></span>', array('action' => 'view', $user['User']['id']), array('class' => 'btn btn-default btn-xs', 'title' => __('View'), 'escape' => false)); ?>
-								<?php echo $this->Html->link('<span class="glyphicon glyphicon-pencil"></span>', array('action' => 'edit', $user['User']['id']), array('class' => 'btn btn-default btn-xs', 'title' => __('Edit'), 'escape' => false)); ?>
-								<?php echo $this->Form->postLink('<span class="glyphicon glyphicon-trash"></span>', array('action' => 'delete', $user['User']['id']), array('class' => 'btn btn-default btn-xs', 'title' => __('Delete'), 'escape' => false, 'confirm' => __('Are you sure you want to delete this record (ID: %s)?', $user['User']['id']))); ?>
 							</div>
 						</td>
 					</tr>

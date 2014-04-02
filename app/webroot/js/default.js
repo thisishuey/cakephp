@@ -1,6 +1,7 @@
 $(function() {
 	$('#filterUserId').on('change', function(event) {
 		var $that = $(this);
-		window.location.href = baseUrl + 'cases/index/' + $that.prop('value');
+		var $form = $that.closest('form');
+		window.location.href = baseUrl + $form.data('url') + $that.prop('value');
 	});
 });

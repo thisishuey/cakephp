@@ -1,5 +1,6 @@
 <?php
 	App::uses('AppController', 'Controller');
+	App::uses('CakeTime', 'Utility');
 	App::uses('Xml', 'Utility');
 	App::uses('HttpSocket', 'Network/Http');
 
@@ -75,11 +76,84 @@
 				$this->Session->setFlash(__('You must login to access that page.'), 'Cherry.flash/danger');
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
 			}
+			$auth = $this->Session->read('Auth');
+			$redirectUser = $this->User->find('first', array('conditions' => array('User.fogbugz_id' => $auth['id'])));
+			if (!$id) {
+				return $this->redirect(array('controller' => 'users', 'action' => 'view', $redirectUser['User']['id']));
+			}
 			if (!$this->User->exists($id)) {
 				throw new NotFoundException(__('Invalid user'));
 			}
 			$user = $this->User->find('first', array('conditions' => array('User.' . $this->User->primaryKey => $id)));
-			$this->set(compact('user'));
+			$users = $this->User->find('list');
+			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $user['User']['name'] . '" resolved:"-8d.." orderBy:"resolved"&cols=' . $cols;
+			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
+			$resolvedResponse = Xml::toArray($resolvedResponseXml);
+			if (isset($resolvedResponse['response']['cases'])) {
+				$resolvedCount = $resolvedResponse['response']['cases']['@count'];
+			} else {
+				$resolvedCount = 0;
+			}
+			if ((int) $resolvedCount === 0) {
+				$resolvedCases = array();
+			} else if ((int) $resolvedCount === 1) {
+				$resolvedCases = array($resolvedResponse['response']['cases']['case']);
+			} else {
+				$resolvedCases = $resolvedResponse['response']['cases']['case'];
+			}
+			$completed = array();
+			for ($i = 7; $i >= 0; $i--) {
+				$date = CakeTime::format('-' . $i . 'days');
+				$completed[$date] = array('projects' => array());
+				if (CakeTime::format($date) !== CakeTime::format('now')) {
+					$completed[$date]['dateFormat'] = '%A <small>%B %e, %Y</small>';
+				} else {
+					$completed[$date]['dateFormat'] = 'Today <small>%B %e, %Y</small>';
+				}
+			}
+			if (!empty($resolvedCases)) {
+				foreach ($resolvedCases as $resolvedCase) {
+					$date = CakeTime::format($resolvedCase['dtResolved']);
+					if (isset($completed[$date])) {
+						$completed[$date]['projects'][$resolvedCase['sProject']][] = array(
+							'id' => $resolvedCase['ixBug'],
+							'title' => $resolvedCase['sTitle'],
+							'project' => $resolvedCase['sProject'],
+							'events' => $resolvedCase['events']['event']
+						);
+					}
+				}
+			}
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $user['User']['name'] . '" status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
+			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
+			$activeDevResponse = Xml::toArray($activeDevResponseXml);
+			if (isset($activeDevResponse['response']['cases'])) {
+				$activeDevCount = $activeDevResponse['response']['cases']['@count'];
+			} else {
+				$activeDevCount = 0;
+			}
+			if ((int) $activeDevCount === 0) {
+				$activeDevCases = array();
+			} else if ((int) $activeDevCount === 1) {
+				$activeDevCases = array($activeDevResponse['response']['cases']['case']);
+			} else {
+				$activeDevCases = $activeDevResponse['response']['cases']['case'];
+			}
+			$workingOn = array('projects' => array());
+			if (!empty($activeDevCases)) {
+				foreach ($activeDevCases as $activeDevCase) {
+					$workingOn['projects'][$activeDevCase['sProject']][] = array(
+						'id' => $activeDevCase['ixBug'],
+						'title' => $activeDevCase['sTitle'],
+						'project' => $activeDevCase['sProject'],
+						'events' => $activeDevCase['events']['event']
+					);
+				}
+			}
+			$this->request->data['filter']['user_id'] = $id;
+			$this->set(compact('user', 'users', 'completed', 'workingOn'));
+			$this->set('_serialize', array('completed', 'workingOn'));
 		}
 
 		public function add() {
