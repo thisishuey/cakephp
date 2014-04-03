@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-md-3 sidebar">
+	<div class="col-md-3 col-md-push-9 sidebar">
 		<div class="panel panel-default">
 			<div class="panel-heading"><?php echo __('Switch User'); ?></div>
 			<div class="list-group">
@@ -11,7 +11,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-9 content">
+	<div class="col-md-9 col-md-pull-3 content">
 		<div class="page-header">
 			<h2>
 				<?php echo $user['User']['name']; ?>
