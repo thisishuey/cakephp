@@ -128,6 +128,7 @@
 							$resolvedByUser = $event['ixPerson'] === $user['User']['fogbugz_id'];
 							if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
 								$resolvedBy = true;
+								$date = CakeTime::format($event['dt']);
 							}
 						}
 						if ($resolvedBy) {
