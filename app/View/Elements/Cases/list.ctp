@@ -1,8 +1,8 @@
 <ul>
 	<?php if (!empty($projects)): ?>
-		<?php foreach ($projects as $projectTitle => $cases): ?>
+		<?php foreach ($projects as $title => $cases): ?>
 			<li>
-				<h5><?php echo $projectTitle; ?></h5>
+				<h5><?php echo $title; ?></h5>
 				<ul>
 					<?php foreach ($cases as $case): ?>
 						<li>

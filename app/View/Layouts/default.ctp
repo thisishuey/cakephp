@@ -46,6 +46,7 @@
 							<ul class="dropdown-menu">
 								<li><?php echo $this->Html->link('Scrum', array('controller' => 'cases', 'action' => 'index')); ?></li>
 								<?php if ($this->Session->check('Auth.fogbugz_url')): ?>
+									<li class="divider"></li>
 									<li><?php echo $this->Html->link('Open FogBugz', $this->Session->read('Auth.fogbugz_url'), array('target' => '_blank')); ?></li>
 								<?php endif; ?>
 							</ul>
@@ -63,7 +64,7 @@
 							<li class="dropdown">
 								<?php echo $this->Html->link($this->Session->read('Auth.name') . ' <span class="caret"></span>', '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)); ?>
 								<ul class="dropdown-menu">
-									<li><?php echo $this->Html->link('Scrum', array('controller' => 'users', 'action' => 'view')); ?></li>
+									<li><?php echo $this->Html->link('Last 7 Days', array('controller' => 'users', 'action' => 'view')); ?></li>
 									<li class="divider"></li>
 									<li><?php echo $this->Html->link('Logout', array('controller' => 'users', 'action' => 'logout')); ?></li>
 								</ul>

@@ -19,15 +19,25 @@
 				return $this->redirect(array('controller' => 'users', 'action' => 'login'));
 			}
 			$auth = $this->Session->read('Auth');
-			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
-			$users = $this->User->find('list');
+			$cols = 'ixBug,sTitle,dtResolved,sProject,events,ixPersonResolvedBy,ixPersonAssignedTo';
+			$users = $this->User->find('all');
+			$fogbugzUsers = $this->User->find('list', array('fields' => array('fogbugz_id', 'name')));
 			$resolvedByQuery = array();
 			$assignedToQuery = array();
-			foreach ($users as $id => $name) {
-				$resolvedByQuery[] = 'resolvedBy:"' . $name . '"';
-				$assignedToQuery[] = 'assignedTo:"' . $name . '"';
+			$scrum = array();
+			foreach ($users as $user) {
+				$resolvedByQuery[] = 'resolvedBy:"' . $user['User']['name'] . '"';
+				$assignedToQuery[] = 'assignedTo:"' . $user['User']['name'] . '"';
+				$scrum[$user['User']['fogbugz_id']] = array('User' => $user['User'], 'Completed' => array(), 'WorkingOn' => array());
 			}
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $resolvedByQuery) . ' resolved:"-8d.." orderBy:"resolved"&cols=' . $cols;
+			if (isset($this->request->named['days'])) {
+				$days = $this->request->named['days'];
+			} else if ((int) CakeTime::format('now', '%u') === 1) {
+				$days = 3;
+			} else {
+				$days = 1;
+			}
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $resolvedByQuery) . ' resolved:"-' . ($days + 1) . 'd.." orderBy:"project"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -42,24 +52,14 @@
 			} else {
 				$resolvedCases = $resolvedResponse['response']['cases']['case'];
 			}
-			$completed = array();
-			for ($i = 7; $i >= 0; $i--) {
-				$date = CakeTime::format('-' . $i . 'days');
-				$completed[$date] = array('projects' => array());
-				if (CakeTime::format($date) !== CakeTime::format('now')) {
-					$completed[$date]['dateFormat'] = '%A <small>%B %e, %Y</small>';
-				} else {
-					$completed[$date]['dateFormat'] = 'Today <small>%B %e, %Y</small>';
-				}
-			}
 			if (!empty($resolvedCases)) {
 				foreach ($resolvedCases as $resolvedCase) {
-					$date = CakeTime::format($resolvedCase['dtResolved']);
-					if (isset($completed[$date])) {
-						$completed[$date]['projects'][$resolvedCase['sProject']][] = array(
+					if (CakeTime::format($resolvedCase['dtResolved'], '%y%m%d') >= CakeTime::format('-' . $days . ' days', '%y%m%d')) {
+						$scrum[$resolvedCase['ixPersonResolvedBy']]['Completed'][$resolvedCase['sProject']][] = array(
 							'id' => $resolvedCase['ixBug'],
 							'title' => $resolvedCase['sTitle'],
 							'project' => $resolvedCase['sProject'],
+							'date' => $resolvedCase['dtResolved'],
 							'events' => $resolvedCase['events']['event']
 						);
 					}
@@ -80,19 +80,19 @@
 			} else {
 				$activeDevCases = $activeDevResponse['response']['cases']['case'];
 			}
-			$workingOn = array('projects' => array());
 			if (!empty($activeDevCases)) {
 				foreach ($activeDevCases as $activeDevCase) {
-					$workingOn['projects'][$activeDevCase['sProject']][] = array(
+					$scrum[$activeDevCase['ixPersonAssignedTo']]['WorkingOn'][$resolvedCase['sProject']][] = array(
 						'id' => $activeDevCase['ixBug'],
 						'title' => $activeDevCase['sTitle'],
 						'project' => $activeDevCase['sProject'],
+						'date' => $activeDevCase['dtResolved'],
 						'events' => $activeDevCase['events']['event']
 					);
 				}
 			}
-			$this->set(compact('users', 'completed', 'workingOn'));
-			$this->set('_serialize', array('completed', 'workingOn'));
+			$this->set(compact('users', 'scrum'));
+			$this->set('_serialize', array('scrum'));
 		}
 
 	}

@@ -104,7 +104,7 @@
 			}
 			$completed = array();
 			for ($i = 7; $i >= 0; $i--) {
-				$date = CakeTime::format('-' . $i . 'days');
+				$date = CakeTime::format('-' . $i . ' days');
 				$completed[$date] = array('projects' => array());
 				if (CakeTime::format($date) !== CakeTime::format('now')) {
 					$completed[$date]['dateFormat'] = '%A <small>%B %e, %Y</small>';
