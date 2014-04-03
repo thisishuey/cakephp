@@ -56,7 +56,7 @@
 					foreach ($resolvedCase['events']['event'] as $event) {
 						$resolvedByDate = CakeTime::format($event['dt'], '%y%m%d') >= CakeTime::format('- ' . $days . ' days', '%y%m%d');
 						$resolvedEvent = $event['sVerb'] === 'Resolved';
-						$resolvedByUser = isset($scrum[$event['ixPerson']]);
+						$resolvedByUser = isset($scrum[$event['ixPerson']]); // need to dedupe
 						if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
 							$scrum[$event['ixPerson']]['Completed'][$resolvedCase['sProject']][] = array(
 								'id' => $resolvedCase['ixBug'],
