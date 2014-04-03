@@ -86,8 +86,13 @@
 			}
 			$user = $this->User->find('first', array('conditions' => array('User.' . $this->User->primaryKey => $id)));
 			$users = $this->User->find('list');
+			if (isset($this->request->named['days'])) {
+				$days = $this->request->named['days'];
+			} else {
+				$days = 7;
+			}
 			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=resolvedby:"' . $user['User']['name'] . '" resolved:"-8d.." orderBy:"resolved"&cols=' . $cols;
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=editedBy:"' . $user['User']['name'] . '" edited:"-' . ($days + 1) . 'd.." orderBy:"resolved"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -103,7 +108,7 @@
 				$resolvedCases = $resolvedResponse['response']['cases']['case'];
 			}
 			$completed = array();
-			for ($i = 7; $i >= 0; $i--) {
+			for ($i = $days; $i >= 0; $i--) {
 				$date = CakeTime::format('-' . $i . ' days');
 				$completed[$date] = array('projects' => array());
 				if (CakeTime::format($date) !== CakeTime::format('now')) {
@@ -116,12 +121,23 @@
 				foreach ($resolvedCases as $resolvedCase) {
 					$date = CakeTime::format($resolvedCase['dtResolved']);
 					if (isset($completed[$date])) {
-						$completed[$date]['projects'][$resolvedCase['sProject']][] = array(
-							'id' => $resolvedCase['ixBug'],
-							'title' => $resolvedCase['sTitle'],
-							'project' => $resolvedCase['sProject'],
-							'events' => $resolvedCase['events']['event']
-						);
+						$resolvedBy = false;
+						foreach ($resolvedCase['events']['event'] as $event) {
+							$resolvedByDate = CakeTime::format($event['dt'], '%y%m%d') >= CakeTime::format('- ' . $days . ' days', '%y%m%d');
+							$resolvedEvent = $event['sVerb'] === 'Resolved';
+							$resolvedByUser = $event['ixPerson'] === $user['User']['fogbugz_id'];
+							if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
+								$resolvedBy = true;
+							}
+						}
+						if ($resolvedBy) {
+							$completed[$date]['projects'][$resolvedCase['sProject']][] = array(
+								'id' => $resolvedCase['ixBug'],
+								'title' => $resolvedCase['sTitle'],
+								'project' => $resolvedCase['sProject'],
+								'events' => $resolvedCase['events']['event']
+							);
+						}
 					}
 				}
 			}
