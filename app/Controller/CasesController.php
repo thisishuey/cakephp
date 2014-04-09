@@ -56,9 +56,9 @@
 					foreach ($resolvedCase['events']['event'] as $event) {
 						$resolvedByDate = CakeTime::format($event['dt'], '%y%m%d') >= CakeTime::format('- ' . $days . ' days', '%y%m%d');
 						$resolvedEvent = $event['sVerb'] === 'Resolved';
-						$resolvedByUser = isset($scrum[$event['ixPerson']]); // need to dedupe
+						$resolvedByUser = isset($scrum[$event['ixPerson']]);
 						if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
-							$scrum[$event['ixPerson']]['Completed'][$resolvedCase['sProject']][] = array(
+							$scrum[$event['ixPerson']]['Completed'][$resolvedCase['sProject']][$resolvedCase['ixBug']] = array(
 								'id' => $resolvedCase['ixBug'],
 								'title' => $resolvedCase['sTitle'],
 								'project' => $resolvedCase['sProject'],
@@ -69,7 +69,7 @@
 					}
 				}
 			}
-			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $assignedToQuery) . ' status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $assignedToQuery) . ' status:"active (dev)" OR status:"resolved (qa review)" orderBy:"ixBug"&cols=' . $cols;
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
 			if (isset($activeDevResponse['response']['cases'])) {
@@ -86,7 +86,7 @@
 			}
 			if (!empty($activeDevCases)) {
 				foreach ($activeDevCases as $activeDevCase) {
-					$scrum[$activeDevCase['ixPersonAssignedTo']]['WorkingOn'][$resolvedCase['sProject']][] = array(
+					$scrum[$activeDevCase['ixPersonAssignedTo']]['WorkingOn'][$activeDevCase['sProject']][] = array(
 						'id' => $activeDevCase['ixBug'],
 						'title' => $activeDevCase['sTitle'],
 						'project' => $activeDevCase['sProject'],

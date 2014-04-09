@@ -28,6 +28,6 @@
 			<?php endforeach; ?>
 		</ul>
 		<h3>Working On:</h3>
-		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'emptyText' => 'No cases set to "Active (Dev)"')); ?>
+		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
 	</div>
 </div>

@@ -15,7 +15,7 @@
 					<h4>Completed</h4>
 					<?php echo $this->element('Cases/list', array('projects' => $user['Completed'], 'emptyText' => 'No cases completed')); ?>
 					<h4>Working On</h4>
-					<?php echo $this->element('Cases/list', array('projects' => $user['WorkingOn'], 'emptyText' => 'No cases set to "Active (Dev)"')); ?>
+					<?php echo $this->element('Cases/list', array('projects' => $user['WorkingOn'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
 				</div>
 			</div>
 		</div>

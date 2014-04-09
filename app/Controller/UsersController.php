@@ -142,7 +142,7 @@
 					}
 				}
 			}
-			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $user['User']['name'] . '" status:"active (dev)" orderBy:"ixBug"&cols=' . $cols;
+			$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $user['User']['name'] . '" status:"active (dev)" OR status:"resolved (qa review)" orderBy:"ixBug"&cols=' . $cols;
 			$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 			$activeDevResponse = Xml::toArray($activeDevResponseXml);
 			if (isset($activeDevResponse['response']['cases'])) {
