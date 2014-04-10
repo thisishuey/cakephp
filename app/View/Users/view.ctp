@@ -29,5 +29,7 @@
 		</ul>
 		<h3>Working On:</h3>
 		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
+		<h3>Blockers:</h3>
+		<?php echo $this->element('Cases/list', array('projects' => $blockers['projects'], 'emptyText' => 'No blockers')); ?>
 	</div>
 </div>

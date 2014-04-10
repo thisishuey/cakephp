@@ -6,7 +6,9 @@
 				<ul>
 					<?php foreach ($cases as $case): ?>
 						<li>
-							<strong><?php echo $this->Html->link($case['id'], '#', array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => '#modal-' . $case['id'])); ?>:</strong> <?php echo $case['title']; ?>
+							<strong><?php echo $this->Html->link($case['id'], '#', array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => '#modal-' . $case['id'])); ?>:</strong>
+							<?php echo $case['title']; ?>
+							<strong>[<?php echo $case['elapsed']; ?>/<?php echo $case['estimate']; ?>]</strong>
 							<?php echo $this->element('Cases/modal', compact('case')); ?>
 						</li>
 					<?php endforeach; ?>

@@ -91,7 +91,7 @@
 			} else {
 				$days = 7;
 			}
-			$cols = 'ixBug,sTitle,dtResolved,sProject,events';
+			$cols = 'ixBug,sTitle,dtResolved,sProject,events,hrsElapsed,hrsCurrEst';
 			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=editedBy:"' . $user['User']['name'] . '" edited:"-' . ($days + 1) . 'd.." orderBy:"resolved"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
@@ -136,6 +136,9 @@
 								'id' => $resolvedCase['ixBug'],
 								'title' => $resolvedCase['sTitle'],
 								'project' => $resolvedCase['sProject'],
+								'date' => $resolvedCase['dtResolved'],
+								'elapsed' => $resolvedCase['hrsElapsed'],
+								'estimate' => $resolvedCase['hrsCurrEst'],
 								'events' => $resolvedCase['events']['event']
 							);
 						}
@@ -164,13 +167,45 @@
 						'id' => $activeDevCase['ixBug'],
 						'title' => $activeDevCase['sTitle'],
 						'project' => $activeDevCase['sProject'],
+						'date' => $activeDevCase['dtResolved'],
+						'elapsed' => $activeDevCase['hrsElapsed'],
+						'estimate' => $activeDevCase['hrsCurrEst'],
 						'events' => $activeDevCase['events']['event']
 					);
 				}
 			}
+			$activeBlockerRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=assignedTo:"' . $user['User']['name'] . '" status:"active (blocker)" orderBy:"ixBug"&cols=' . $cols;
+			$activeBlockerResponseXml = Xml::build($activeBlockerRequestUrl);
+			$activeBlockerResponse = Xml::toArray($activeBlockerResponseXml);
+			if (isset($activeBlockerResponse['response']['cases'])) {
+				$activeBlockerCount = $activeBlockerResponse['response']['cases']['@count'];
+			} else {
+				$activeBlockerCount = 0;
+			}
+			if ((int) $activeBlockerCount === 0) {
+				$activeBlockerCases = array();
+			} else if ((int) $activeBlockerCount === 1) {
+				$activeBlockerCases = array($activeBlockerResponse['response']['cases']['case']);
+			} else {
+				$activeBlockerCases = $activeBlockerResponse['response']['cases']['case'];
+			}
+			$blockers = array('projects' => array());
+			if (!empty($activeBlockerCases)) {
+				foreach ($activeBlockerCases as $activeBlockerCase) {
+					$blockers['projects'][$activeBlockerCase['sProject']][] = array(
+						'id' => $activeBlockerCase['ixBug'],
+						'title' => $activeBlockerCase['sTitle'],
+						'project' => $activeBlockerCase['sProject'],
+						'date' => $activeBlockerCase['dtResolved'],
+						'elapsed' => $activeBlockerCase['hrsElapsed'],
+						'estimate' => $activeBlockerCase['hrsCurrEst'],
+						'events' => $activeBlockerCase['events']['event']
+					);
+				}
+			}
 			$this->request->data['filter']['user_id'] = $id;
-			$this->set(compact('user', 'users', 'completed', 'workingOn'));
-			$this->set('_serialize', array('completed', 'workingOn'));
+			$this->set(compact('user', 'users', 'completed', 'workingOn', 'blockers'));
+			$this->set('_serialize', array('completed', 'workingOn', 'blockers'));
 		}
 
 		public function add() {
