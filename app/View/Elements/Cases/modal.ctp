@@ -13,11 +13,11 @@
 							<div class="panel panel-default">
 								<div class="panel-heading">
 									<h4 class="panel-title">
-										<?php echo $this->Html->link($event['evtDescription'], '#collapse-event-' . $event['ixBugEvent'], array('escape' => false, 'data-toggle' => 'collapse', 'data-parent' => '#events-' . $case['id'])); ?>
+										<?php echo $this->Html->link($event['evtDescription'], '#collapse-event-' . $modalPrefix . '-' . $event['ixBugEvent'], array('escape' => false, 'data-toggle' => 'collapse', 'data-parent' => '#events-' . $case['id'])); ?>
 										<small><?php echo $this->Time->format($event['dt'], '%B %e, %Y'); ?></small>
 									</h4>
 								</div>
-								<div id="collapse-event-<?php echo $event['ixBugEvent']; ?>" class="panel-collapse collapse">
+								<div id="collapse-event-<?php echo $modalPrefix; ?>-<?php echo $event['ixBugEvent']; ?>" class="panel-collapse collapse">
 									<div class="panel-body">
 										<p><strong>Date:</strong> <?php echo $this->Time->nice($event['dt']); ?>
 										<?php if ($event['sChanges'] !== ''): ?>
