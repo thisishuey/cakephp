@@ -6,7 +6,7 @@
 				<ul>
 					<?php foreach ($cases as $case): ?>
 						<li>
-							<strong><?php echo $this->Html->link($case['id'], '#modal-' . $modalPrefix . '-' . $case['id'], array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal')); ?>:</strong>
+							<strong><?php echo $this->Html->link($case['id'], $this->Session->read('Auth.fogbugz_url') . '/default.asp?' . $case['id'], array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => '#modal-' . $modalPrefix . '-' . $case['id'])); ?>:</strong>
 							<?php echo $case['title']; ?>
 							<strong>[<?php echo $case['elapsed']; ?>/<?php echo $case['estimate']; ?>]</strong>
 							<?php echo $this->element('Cases/modal', compact('case', 'modalPrefix')); ?>
