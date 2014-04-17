@@ -23,13 +23,13 @@
 			<?php foreach ($completed as $date => $completedDate): ?>
 				<li>
 					<h4><?php echo $this->Time->format($date, $completedDate['dateFormat']); ?></h4>
-					<?php echo $this->element('Cases/list', array('projects' => $completedDate['projects'], 'emptyText' => 'No cases completed')); ?>
+					<?php echo $this->element('Cases/list', array('projects' => $completedDate['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases completed')); ?>
 				</li>
 			<?php endforeach; ?>
 		</ul>
 		<h3>Working On:</h3>
-		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
+		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
 		<h3>Blockers:</h3>
-		<?php echo $this->element('Cases/list', array('projects' => $blockers['projects'], 'emptyText' => 'No blockers')); ?>
+		<?php echo $this->element('Cases/list', array('projects' => $blockers['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No blockers')); ?>
 	</div>
 </div>
