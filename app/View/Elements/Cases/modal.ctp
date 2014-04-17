@@ -7,6 +7,8 @@
 			</div>
 			<div class="modal-body">
 				<p><strong>Project:</strong> <?php echo $case['project']; ?></p>
+				<p><strong>Elapsed:</strong> <?php echo $case['elapsed']; ?> hours</p>
+				<p><strong>Estimated:</strong> <?php echo $case['estimate']; ?> hours</p>
 				<?php if (isset($case['events'])): ?>
 					<div class="panel-group" id="events-<?php echo $case['id']; ?>">
 						<?php foreach ($case['events'] as $event): ?>
@@ -14,7 +16,7 @@
 								<div class="panel-heading">
 									<h4 class="panel-title">
 										<?php echo $this->Html->link($event['evtDescription'], '#collapse-event-' . $modalPrefix . '-' . $event['ixBugEvent'], array('escape' => false, 'data-toggle' => 'collapse', 'data-parent' => '#events-' . $case['id'])); ?>
-										<small><?php echo $this->Time->format($event['dt'], '%B %e, %Y'); ?></small>
+										<small><?php echo $this->Time->format($event['dt'], '%B %e, %Y %l:%M:%S %p'); ?></small>
 									</h4>
 								</div>
 								<div id="collapse-event-<?php echo $modalPrefix; ?>-<?php echo $event['ixBugEvent']; ?>" class="panel-collapse collapse">
