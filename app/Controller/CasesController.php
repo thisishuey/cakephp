@@ -45,7 +45,7 @@
 				} else {
 					$days = 1;
 				}
-				$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $editedByQuery) . ' edited:"-' . ($days + 1) . 'd.." orderBy:"project"&cols=' . $cols;
+				$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $editedByQuery) . ' edited:"-' . ($days + 1) . 'd.." orderBy:"project,resolved"&cols=' . $cols;
 				$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 				$resolvedResponse = Xml::toArray($resolvedResponseXml);
 				if (isset($resolvedResponse['response']['cases'])) {
@@ -63,7 +63,7 @@
 				if (!empty($resolvedCases)) {
 					foreach ($resolvedCases as $resolvedCase) {
 						foreach ($resolvedCase['events']['event'] as $event) {
-							$resolvedByDate = CakeTime::format($event['dt'], '%y%m%d') >= CakeTime::format('- ' . $days . ' days', '%y%m%d');
+							$resolvedByDate = CakeTime::format($event['dt'], '%G%m%d%H%M') >= CakeTime::format('- ' . $days . ' days', '%G%m%d1030');
 							$resolvedEvent = $event['sVerb'] === 'Resolved';
 							$resolvedByUser = isset($scrum[$event['ixPerson']]);
 							if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
@@ -71,7 +71,7 @@
 									'id' => $resolvedCase['ixBug'],
 									'title' => $resolvedCase['sTitle'],
 									'project' => $resolvedCase['sProject'],
-									'date' => $resolvedCase['dtResolved'],
+									'date' => $event['dt'],
 									'elapsed' => $resolvedCase['hrsElapsed'],
 									'estimate' => $resolvedCase['hrsCurrEst'],
 									'events' => $resolvedCase['events']['event']
@@ -80,7 +80,7 @@
 						}
 					}
 				}
-				$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $assignedToQuery) . ' status:"active (dev)" OR status:"resolved (qa review)" orderBy:"ixBug"&cols=' . $cols;
+				$activeDevRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=' . implode(' OR ', $assignedToQuery) . ' status:"active (dev)" OR status:"resolved (qa review)" orderBy:"project,ixBug"&cols=' . $cols;
 				$activeDevResponseXml = Xml::build($activeDevRequestUrl);
 				$activeDevResponse = Xml::toArray($activeDevResponseXml);
 				if (isset($activeDevResponse['response']['cases'])) {

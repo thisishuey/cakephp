@@ -92,7 +92,7 @@
 				$days = 7;
 			}
 			$cols = 'ixBug,sTitle,dtResolved,sProject,events,hrsElapsed,hrsCurrEst';
-			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=editedBy:"' . $user['User']['name'] . '" edited:"-' . ($days + 1) . 'd.." orderBy:"resolved"&cols=' . $cols;
+			$resolvedRequestUrl = $auth['fogbugz_url'] . '/api.asp?token=' . $auth['token'] . '&cmd=search&q=editedBy:"' . $user['User']['name'] . '" edited:"-' . ($days + 1) . 'd.." orderBy:"project,resolved"&cols=' . $cols;
 			$resolvedResponseXml = Xml::build($resolvedRequestUrl);
 			$resolvedResponse = Xml::toArray($resolvedResponseXml);
 			if (isset($resolvedResponse['response']['cases'])) {
@@ -119,24 +119,17 @@
 			}
 			if (!empty($resolvedCases)) {
 				foreach ($resolvedCases as $resolvedCase) {
-					$date = CakeTime::format($resolvedCase['dtResolved']);
-					if (isset($completed[$date])) {
-						$resolvedBy = false;
-						foreach ($resolvedCase['events']['event'] as $event) {
-							$resolvedByDate = CakeTime::format($event['dt'], '%y%m%d') >= CakeTime::format('- ' . $days . ' days', '%y%m%d');
-							$resolvedEvent = $event['sVerb'] === 'Resolved';
-							$resolvedByUser = $event['ixPerson'] === $user['User']['fogbugz_id'];
-							if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
-								$resolvedBy = true;
-								$date = CakeTime::format($event['dt']);
-							}
-						}
-						if ($resolvedBy) {
-							$completed[$date]['projects'][$resolvedCase['sProject']][] = array(
+					foreach ($resolvedCase['events']['event'] as $event) {
+						$date = CakeTime::format($event['dt']);
+						$resolvedByDate = isset($completed[$date]) && CakeTime::format($event['dt'], '%y%m%d') >= CakeTime::format('- ' . $days . ' days', '%y%m%d');
+						$resolvedEvent = $event['sVerb'] === 'Resolved';
+						$resolvedByUser = $event['ixPerson'] === $user['User']['fogbugz_id'];
+						if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
+							$completed[$date]['projects'][$resolvedCase['sProject']][$resolvedCase['ixBug']] = array(
 								'id' => $resolvedCase['ixBug'],
 								'title' => $resolvedCase['sTitle'],
 								'project' => $resolvedCase['sProject'],
-								'date' => $resolvedCase['dtResolved'],
+								'date' => $event['dt'],
 								'elapsed' => $resolvedCase['hrsElapsed'],
 								'estimate' => $resolvedCase['hrsCurrEst'],
 								'events' => $resolvedCase['events']['event']
