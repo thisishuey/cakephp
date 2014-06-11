@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="myModalLabel"><?php echo $case['id']; ?>: <?php echo $case['title']; ?></h4>
+				<h4 class="modal-title" id="myModalLabel"><?php echo $case['id']; ?>: <?php echo h($case['title']); ?></h4>
 			</div>
 			<div class="modal-body">
 				<p><strong>Project:</strong> <?php echo $case['project']; ?></p>
