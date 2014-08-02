@@ -29,12 +29,9 @@
 			</div>
 			<div id="collapse-user-<?php echo $user['User']['id']; ?>" class="panel-collapse collapse">
 				<div class="panel-body">
-					<h4>Completed</h4>
-					<?php echo $this->element('Cases/list', array('projects' => $user['Completed'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases completed')); ?>
-					<h4>Working On</h4>
-					<?php echo $this->element('Cases/list', array('projects' => $user['WorkingOn'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
-					<h4>Blockers</h4>
-					<?php echo $this->element('Cases/list', array('projects' => $user['Blockers'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No blockers')); ?>
+					<?php echo $this->element('Cases/list', array('projects' => $user['Completed'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases completed', 'header' => 'Completed')); ?>
+					<?php echo $this->element('Cases/list', array('projects' => $user['WorkingOn'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"', 'header' => 'Working On')); ?>
+					<?php echo $this->element('Cases/list', array('projects' => $user['Blockers'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No blockers', 'header' => 'Blockers')); ?>
 				</div>
 			</div>
 		</div>

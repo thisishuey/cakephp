@@ -21,15 +21,10 @@
 		<h3>Completed</h3>
 		<ul>
 			<?php foreach ($completed as $date => $completedDate): ?>
-				<li>
-					<h4><?php echo $this->Time->format($date, $completedDate['dateFormat']); ?></h4>
-					<?php echo $this->element('Cases/list', array('projects' => $completedDate['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases completed')); ?>
-				</li>
+				<li><?php echo $this->element('Cases/list', array('projects' => $completedDate['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases completed', 'header' => $this->Time->format($date, $completedDate['dateFormat']))); ?></li>
 			<?php endforeach; ?>
 		</ul>
-		<h3>Working On:</h3>
-		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"')); ?>
-		<h3>Blockers:</h3>
-		<?php echo $this->element('Cases/list', array('projects' => $blockers['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No blockers')); ?>
+		<?php echo $this->element('Cases/list', array('projects' => $workingOn['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No cases set to "Active (Dev)" or "Resolved (QA Review)"', 'header' => 'Working On', 'headerWrapper' => 'h3')); ?>
+		<?php echo $this->element('Cases/list', array('projects' => $blockers['projects'], 'modalPrefix' => $user['User']['id'], 'emptyText' => 'No blockers', 'header' => 'Blockers', 'headerWrapper' => 'h3')); ?>
 	</div>
 </div>
