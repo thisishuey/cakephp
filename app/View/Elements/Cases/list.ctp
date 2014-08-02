@@ -5,8 +5,14 @@
 				<h5><?php echo $title; ?></h5>
 				<ul>
 					<?php foreach ($cases as $case): ?>
-						<li>
-							<strong><?php echo $this->Html->link($case['id'], $this->Session->read('Auth.fogbugz_url') . '/default.asp?' . $case['id'], array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => '#modal-' . $modalPrefix . '-' . $case['id'])); ?>:</strong>
+						<?php $class = ''; ?>
+						<?php if (isset($case['status'])): ?>
+							<?php $class = strtolower(Inflector::slug($case['status'])); ?>
+						<?php endif; ?>
+						<?php $url = $this->Session->read('Auth.fogbugz_url') . '/default.asp?' . $case['id']; ?>
+						<?php $target = '#modal-' . $modalPrefix . '-' . $case['id']; ?>
+						<li class="<?php echo $class; ?>">
+							<strong><?php echo $this->Html->link($case['id'], $url, array('class' => 'text-success', 'target' => '_blank', 'data-toggle' => 'modal', 'data-target' => $target)); ?>:</strong>
 							<?php echo h($case['title']); ?>
 							<strong>[<?php echo $case['elapsed']; ?>/<?php echo $case['estimate']; ?>]</strong>
 							<?php echo $this->element('Cases/modal', compact('case', 'modalPrefix')); ?>

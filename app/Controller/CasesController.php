@@ -20,6 +20,17 @@
 			}
 			$auth = $this->Session->read('Auth');
 			$cols = 'ixBug,sTitle,dtResolved,sProject,events,ixPersonResolvedBy,ixPersonAssignedTo,hrsElapsed,hrsCurrEst';
+			$resolvedStatuses = array(
+				'Resolved (Completed)',
+				'Resolved (Deployed to QA)',
+				'Resolved (QA Review)',
+				'Resolved (Verified on QA)',
+				'Resolved (Development Complete)',
+				'Resolved (Duplicate)',
+				'Resolved (Not Reproducible)',
+				'Resolved (By Design)',
+				'Call Client & Close'
+			);
 			$users = $this->User->find('all');
 			$editedByQuery = array();
 			$assignedToQuery = array();
@@ -67,6 +78,12 @@
 							$resolvedEvent = $event['sVerb'] === 'Resolved';
 							$resolvedByUser = isset($scrum[$event['ixPerson']]);
 							if ($resolvedByDate && $resolvedEvent && $resolvedByUser) {
+								$status = 'Resolved (Completed)';
+								foreach ($resolvedStatuses as $resolvedStatus) {
+									if (strpos($event['sChanges'], 'to \'' . $resolvedStatus . '\'') !== false) {
+										$status = $resolvedStatus;
+									}
+								}
 								$scrum[$event['ixPerson']]['Completed'][$resolvedCase['sProject']][$resolvedCase['ixBug']] = array(
 									'id' => $resolvedCase['ixBug'],
 									'title' => $resolvedCase['sTitle'],
@@ -74,7 +91,8 @@
 									'date' => $event['dt'],
 									'elapsed' => $resolvedCase['hrsElapsed'],
 									'estimate' => $resolvedCase['hrsCurrEst'],
-									'events' => $resolvedCase['events']['event']
+									'events' => $resolvedCase['events']['event'],
+									'status' => $status
 								);
 							}
 						}
