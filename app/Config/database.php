@@ -66,7 +66,7 @@ class DATABASE_CONFIG {
 		'persistent' => false,
 		'host' => 'localhost',
 		'login' => 'root',
-		'password' => 'N3qad1Em',
+		'password' => 'root',
 		'database' => 'fogbugz',
 		'prefix' => '',
 		//'encoding' => 'utf8',
